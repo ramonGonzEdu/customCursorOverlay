@@ -1,6 +1,7 @@
 use std::f32::consts::PI;
 
 use device_query::{DeviceQuery, DeviceState};
+use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
 use crate::linear_samplers::{Movesampler1D, Sampler1D};
@@ -9,7 +10,7 @@ pub trait Sampler2D {
     fn sample(&mut self, t: f32) -> (f32, f32);
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, JsonSchema)]
 #[serde(tag = "type")]
 pub enum Movesampler2D {
     Orbit(Orbit),
@@ -27,7 +28,7 @@ impl Sampler2D for Movesampler2D {
     }
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, JsonSchema)]
 
 pub struct Orbit {
     pub speed: Movesampler1D,
@@ -60,7 +61,7 @@ impl From<Orbit> for Movesampler2D {
     }
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, JsonSchema)]
 pub struct Offset {
     pub x: Movesampler1D,
     pub y: Movesampler1D,
@@ -78,7 +79,7 @@ impl From<Offset> for Movesampler2D {
     }
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, JsonSchema)]
 pub struct Mouse {
     pub scale_center_x: Movesampler1D,
     pub scale_center_y: Movesampler1D,

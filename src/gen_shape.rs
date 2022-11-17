@@ -1,4 +1,5 @@
 use raylib::prelude::RaylibDrawHandle;
+use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
 use crate::{
@@ -10,7 +11,7 @@ pub trait Drawable {
     fn draw(&mut self, d: &mut RaylibDrawHandle, t: f32, coords: (i32, i32));
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, JsonSchema)]
 pub struct Shape {
     pub enabled: Movesampler1D,
     pub movement: Vec<Movesampler2D>,
@@ -27,7 +28,7 @@ impl Drawable for Shape {
     }
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, JsonSchema)]
 #[serde(tag = "type")]
 pub enum ShapeRaw {
     Circle(crate::circle::Circle),
@@ -38,5 +39,22 @@ impl Drawable for ShapeRaw {
         match self {
             ShapeRaw::Circle(c) => c.draw(d, t, pos),
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn json_schema() {
+        let schema = schemars::schema_for!(Vec<Shape>);
+        println!("{}", serde_jsonrc::to_string_pretty(&schema).unwrap());
+        // Write to schema.json
+        std::fs::write(
+            "schema.json",
+            serde_jsonrc::to_string_pretty(&schema).unwrap(),
+        )
+        .unwrap();
     }
 }

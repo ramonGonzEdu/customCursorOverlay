@@ -1,0 +1,451 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Array_of_Shape",
+  "type": "array",
+  "items": {
+    "$ref": "#/definitions/Shape"
+  },
+  "definitions": {
+    "Add": {
+      "type": "object",
+      "required": [
+        "terms"
+      ],
+      "properties": {
+        "terms": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Movesampler1D"
+          }
+        }
+      }
+    },
+    "Color": {
+      "type": "object",
+      "required": [
+        "a",
+        "b",
+        "g",
+        "r"
+      ],
+      "properties": {
+        "a": {
+          "type": "integer",
+          "format": "uint8",
+          "minimum": 0.0
+        },
+        "b": {
+          "type": "integer",
+          "format": "uint8",
+          "minimum": 0.0
+        },
+        "g": {
+          "type": "integer",
+          "format": "uint8",
+          "minimum": 0.0
+        },
+        "r": {
+          "type": "integer",
+          "format": "uint8",
+          "minimum": 0.0
+        }
+      }
+    },
+    "CounterReset": {
+      "type": "object",
+      "required": [
+        "counter",
+        "reset"
+      ],
+      "properties": {
+        "counter": {
+          "$ref": "#/definitions/Movesampler1D"
+        },
+        "reset": {
+          "$ref": "#/definitions/Movesampler1D"
+        }
+      }
+    },
+    "DeltaTime": {
+      "type": "object",
+      "required": [
+        "delta_time_multiplier"
+      ],
+      "properties": {
+        "delta_time_multiplier": {
+          "type": "number",
+          "format": "float"
+        }
+      }
+    },
+    "Divide": {
+      "type": "object",
+      "required": [
+        "bottom",
+        "top"
+      ],
+      "properties": {
+        "bottom": {
+          "$ref": "#/definitions/Movesampler1D"
+        },
+        "top": {
+          "$ref": "#/definitions/Movesampler1D"
+        }
+      }
+    },
+    "KeyPress": {
+      "type": "object",
+      "required": [
+        "keys"
+      ],
+      "properties": {
+        "keys": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "Map": {
+      "type": "object",
+      "required": [
+        "after_max",
+        "after_min",
+        "before_max",
+        "before_min",
+        "sampler"
+      ],
+      "properties": {
+        "after_max": {
+          "type": "number",
+          "format": "float"
+        },
+        "after_min": {
+          "type": "number",
+          "format": "float"
+        },
+        "before_max": {
+          "type": "number",
+          "format": "float"
+        },
+        "before_min": {
+          "type": "number",
+          "format": "float"
+        },
+        "sampler": {
+          "$ref": "#/definitions/Movesampler1D"
+        }
+      }
+    },
+    "Modulo": {
+      "type": "object",
+      "required": [
+        "base",
+        "divisor"
+      ],
+      "properties": {
+        "base": {
+          "$ref": "#/definitions/Movesampler1D"
+        },
+        "divisor": {
+          "$ref": "#/definitions/Movesampler1D"
+        }
+      }
+    },
+    "MouseClick": {
+      "type": "object",
+      "required": [
+        "force_full_cycle",
+        "mouse_button",
+        "mouse_timer_decrease"
+      ],
+      "properties": {
+        "force_full_cycle": {
+          "type": "boolean"
+        },
+        "mouse_button": {
+          "type": "integer",
+          "format": "uint",
+          "minimum": 0.0
+        },
+        "mouse_timer_decrease": {
+          "$ref": "#/definitions/Movesampler1D"
+        }
+      }
+    },
+    "MouseClickCounter": {
+      "type": "object",
+      "required": [
+        "mouse_click_counter_button"
+      ],
+      "properties": {
+        "mouse_click_counter_button": {
+          "type": "integer",
+          "format": "uint",
+          "minimum": 0.0
+        }
+      }
+    },
+    "Movesampler1D": {
+      "anyOf": [
+        {
+          "type": "number",
+          "format": "float"
+        },
+        {
+          "$ref": "#/definitions/Time"
+        },
+        {
+          "$ref": "#/definitions/MouseClick"
+        },
+        {
+          "$ref": "#/definitions/Map"
+        },
+        {
+          "$ref": "#/definitions/Add"
+        },
+        {
+          "$ref": "#/definitions/Subtract"
+        },
+        {
+          "$ref": "#/definitions/Multiply"
+        },
+        {
+          "$ref": "#/definitions/Divide"
+        },
+        {
+          "$ref": "#/definitions/Power"
+        },
+        {
+          "$ref": "#/definitions/Modulo"
+        },
+        {
+          "$ref": "#/definitions/MouseClickCounter"
+        },
+        {
+          "$ref": "#/definitions/CounterReset"
+        },
+        {
+          "$ref": "#/definitions/Switch"
+        },
+        {
+          "$ref": "#/definitions/KeyPress"
+        },
+        {
+          "$ref": "#/definitions/DeltaTime"
+        }
+      ]
+    },
+    "Movesampler2D": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "angle_bottom",
+            "angle_top",
+            "eccentricity",
+            "radius",
+            "speed",
+            "type"
+          ],
+          "properties": {
+            "angle_bottom": {
+              "$ref": "#/definitions/Movesampler1D"
+            },
+            "angle_top": {
+              "$ref": "#/definitions/Movesampler1D"
+            },
+            "eccentricity": {
+              "$ref": "#/definitions/Movesampler1D"
+            },
+            "radius": {
+              "$ref": "#/definitions/Movesampler1D"
+            },
+            "speed": {
+              "$ref": "#/definitions/Movesampler1D"
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "Orbit"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "type",
+            "x",
+            "y"
+          ],
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "Offset"
+              ]
+            },
+            "x": {
+              "$ref": "#/definitions/Movesampler1D"
+            },
+            "y": {
+              "$ref": "#/definitions/Movesampler1D"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "scale",
+            "scale_center_x",
+            "scale_center_y",
+            "type"
+          ],
+          "properties": {
+            "scale": {
+              "$ref": "#/definitions/Movesampler1D"
+            },
+            "scale_center_x": {
+              "$ref": "#/definitions/Movesampler1D"
+            },
+            "scale_center_y": {
+              "$ref": "#/definitions/Movesampler1D"
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "Mouse"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "Multiply": {
+      "type": "object",
+      "required": [
+        "factors"
+      ],
+      "properties": {
+        "factors": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Movesampler1D"
+          }
+        }
+      }
+    },
+    "Power": {
+      "type": "object",
+      "required": [
+        "base",
+        "exponent"
+      ],
+      "properties": {
+        "base": {
+          "$ref": "#/definitions/Movesampler1D"
+        },
+        "exponent": {
+          "$ref": "#/definitions/Movesampler1D"
+        }
+      }
+    },
+    "Shape": {
+      "type": "object",
+      "required": [
+        "enabled",
+        "movement",
+        "shape"
+      ],
+      "properties": {
+        "enabled": {
+          "$ref": "#/definitions/Movesampler1D"
+        },
+        "movement": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Movesampler2D"
+          }
+        },
+        "shape": {
+          "$ref": "#/definitions/ShapeRaw"
+        }
+      }
+    },
+    "ShapeRaw": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "inner_color",
+            "outer_color",
+            "radius",
+            "type"
+          ],
+          "properties": {
+            "inner_color": {
+              "$ref": "#/definitions/Color"
+            },
+            "outer_color": {
+              "$ref": "#/definitions/Color"
+            },
+            "radius": {
+              "type": "number",
+              "format": "float"
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "Circle"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "Subtract": {
+      "type": "object",
+      "required": [
+        "neg",
+        "pos"
+      ],
+      "properties": {
+        "neg": {
+          "$ref": "#/definitions/Movesampler1D"
+        },
+        "pos": {
+          "$ref": "#/definitions/Movesampler1D"
+        }
+      }
+    },
+    "Switch": {
+      "type": "object",
+      "required": [
+        "disable",
+        "enable"
+      ],
+      "properties": {
+        "disable": {
+          "$ref": "#/definitions/Movesampler1D"
+        },
+        "enable": {
+          "$ref": "#/definitions/Movesampler1D"
+        }
+      }
+    },
+    "Time": {
+      "type": "object",
+      "required": [
+        "speed"
+      ],
+      "properties": {
+        "speed": {
+          "type": "number",
+          "format": "float"
+        }
+      }
+    }
+  }
+}

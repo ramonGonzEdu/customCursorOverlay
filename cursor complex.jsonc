@@ -1,9 +1,6 @@
 [
   {
-    "enabled": {
-      "enable": { "keys": ["Escape"] },
-      "disable": { "keys": ["B"] }
-    },
+    "enabled": 1.0,
     "shape": {
       "type": "Circle",
       "outer_color": { "r": 0, "g": 0, "b": 0, "a": 255 },
@@ -11,31 +8,6 @@
       "radius": 4.0
     },
     "movement": []
-  },
-  {
-    "enabled": {
-      "enable": { "keys": ["B"] },
-      "disable": { "keys": ["Escape"] }
-    },
-    "shape": {
-      "type": "Circle",
-      "outer_color": { "r": 0, "g": 0, "b": 0, "a": 255 },
-      "inner_color": { "r": 112, "g": 112, "b": 112, "a": 0 },
-      "radius": 4.0
-    },
-    "movement": [
-      {
-        "type": "Mouse",
-        "scale": 1.0,
-        "scale_center_x": 0,
-        "scale_center_y": 0
-      },
-      {
-        "type": "Offset",
-        "x": -960,
-        "y": -540
-      }
-    ]
   },
   // {
   //   "shape": {
@@ -93,8 +65,8 @@
   // },
   {
     "enabled": {
-      "enable": { "keys": ["Escape"] },
-      "disable": { "keys": ["B"] }
+      "enable": { "keys": ["Key3"] },
+      "disable": { "keys": ["Key1", "Key2"] }
     },
     "shape": {
       "type": "Circle",
@@ -112,21 +84,11 @@
         "radius": {
           "factors": [
             {
-              "pos": {
-                "terms": [
-                  1.0,
-                  {
-                    "mouse_timer_decrease": { "delta_time_multiplier": 0.8 },
-                    "mouse_button": 2,
-                    "force_full_cycle": true
-                  }
-                ]
-              },
+              "pos": 1.0,
               "neg": {
                 "base": {
                   "mouse_timer_decrease": { "delta_time_multiplier": 4 },
-                  "mouse_button": 1,
-                  "force_full_cycle": true
+                  "mouse_button": 1
                 },
                 "exponent": 2
               }
@@ -139,8 +101,8 @@
   },
   {
     "enabled": {
-      "enable": { "keys": ["Escape"] },
-      "disable": { "keys": ["B"] }
+      "enable": { "keys": ["Key3"] },
+      "disable": { "keys": ["Key1", "Key2"] }
     },
     "shape": {
       "type": "Circle",
@@ -158,21 +120,11 @@
         "radius": {
           "factors": [
             {
-              "pos": {
-                "terms": [
-                  1.0,
-                  {
-                    "mouse_timer_decrease": { "delta_time_multiplier": 0.8 },
-                    "mouse_button": 2,
-                    "force_full_cycle": true
-                  }
-                ]
-              },
+              "pos": 1.0,
               "neg": {
                 "base": {
                   "mouse_timer_decrease": { "delta_time_multiplier": 4 },
-                  "mouse_button": 1,
-                  "force_full_cycle": true
+                  "mouse_button": 1
                 },
                 "exponent": 2
               }
@@ -185,8 +137,8 @@
   },
   {
     "enabled": {
-      "enable": { "keys": ["Escape"] },
-      "disable": { "keys": ["B"] }
+      "enable": { "keys": ["Key3"] },
+      "disable": { "keys": ["Key1", "Key2"] }
     },
     "shape": {
       "type": "Circle",
@@ -204,26 +156,116 @@
         "radius": {
           "factors": [
             {
-              "pos": {
-                "terms": [
-                  1.0,
-                  {
-                    "mouse_timer_decrease": { "delta_time_multiplier": 0.8 },
-                    "mouse_button": 2,
-                    "force_full_cycle": true
-                  }
-                ]
-              },
+              "pos": 1.0,
               "neg": {
                 "base": {
                   "mouse_timer_decrease": { "delta_time_multiplier": 4 },
-                  "mouse_button": 1,
-                  "force_full_cycle": true
+                  "mouse_button": 1
                 },
                 "exponent": 2
               }
             },
             40.0
+          ]
+        }
+      }
+    ]
+  },
+
+  {
+    "enabled": {
+      "enable": { "keys": ["Key1", "Key2"] },
+      "disable": { "keys": ["Key3"] }
+    },
+    "shape": {
+      "type": "Circle",
+      "outer_color": { "r": 255, "g": 64, "b": 64, "a": 255 },
+      "inner_color": { "r": 255, "g": 0, "b": 0, "a": 0 },
+      "radius": 4.0
+    },
+    "movement": [
+      {
+        "type": "Orbit",
+        "speed": -6.0,
+        "eccentricity": 1.0,
+        "angle_top": 0.0,
+        "angle_bottom": 3.0,
+        "radius": {
+          "factors": [
+            {
+              "base": {
+                "mouse_timer_decrease": { "delta_time_multiplier": 4 },
+                "mouse_button": 1
+              },
+              "exponent": 2
+            },
+            50.0
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "enabled": {
+      "enable": { "keys": ["Key1", "Key2"] },
+      "disable": { "keys": ["Key3"] }
+    },
+    "shape": {
+      "type": "Circle",
+      "outer_color": { "r": 255, "g": 64, "b": 64, "a": 255 },
+      "inner_color": { "r": 255, "g": 0, "b": 0, "a": 0 },
+      "radius": 4.0
+    },
+    "movement": [
+      {
+        "type": "Orbit",
+        "speed": -6.0,
+        "eccentricity": 1.0,
+        "angle_top": 1.0,
+        "angle_bottom": 3.0,
+        "radius": {
+          "factors": [
+            {
+              "base": {
+                "mouse_timer_decrease": { "delta_time_multiplier": 4 },
+                "mouse_button": 1
+              },
+              "exponent": 2
+            },
+            50.0
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "enabled": {
+      "enable": { "keys": ["Key1", "Key2"] },
+      "disable": { "keys": ["Key3"] }
+    },
+    "shape": {
+      "type": "Circle",
+      "outer_color": { "r": 255, "g": 64, "b": 64, "a": 255 },
+      "inner_color": { "r": 255, "g": 0, "b": 0, "a": 0 },
+      "radius": 4.0
+    },
+    "movement": [
+      {
+        "type": "Orbit",
+        "speed": -6.0,
+        "eccentricity": 1.0,
+        "angle_top": 2.0,
+        "angle_bottom": 3.0,
+        "radius": {
+          "factors": [
+            {
+              "base": {
+                "mouse_timer_decrease": { "delta_time_multiplier": 4 },
+                "mouse_button": 1
+              },
+              "exponent": 2
+            },
+            50.0
           ]
         }
       }

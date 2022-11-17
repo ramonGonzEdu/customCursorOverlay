@@ -1,3 +1,4 @@
+#![windows_subsystem = "windows"]
 pub mod circle;
 pub mod gen_shape;
 pub mod linear_samplers;
@@ -29,8 +30,8 @@ fn main() {
     let (width, height) = unsafe {
         let monitor = raylib::ffi::GetCurrentMonitor();
         (
-            raylib::ffi::GetMonitorWidth(monitor),
-            raylib::ffi::GetMonitorHeight(monitor),
+            raylib::ffi::GetMonitorWidth(monitor) >> 1,
+            raylib::ffi::GetMonitorHeight(monitor) >> 1,
         )
     };
 
@@ -38,6 +39,8 @@ fn main() {
     let sh = height - 20;
     rl.set_window_position(10, 10);
     rl.set_window_size(sw, sh);
+
+    // rl.set_target_fps(5);
 
     let mut cursor: Vec<Shape> =
         serde_jsonrc::from_reader(std::fs::File::open("cursor.jsonc").unwrap()).unwrap();
@@ -66,7 +69,7 @@ fn main() {
 
         for shape in &mut cursor {
             if shape.enabled.sample(t) >= 1.0 {
-                shape.draw(&mut d, t, (sw >> 2, sh >> 2));
+                shape.draw(&mut d, t, (sw >> 1, sh >> 1));
             }
             // shape.draw(&mut d, t, (pos.0 - 10, pos.1 - 10));
         }

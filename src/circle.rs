@@ -1,9 +1,10 @@
 use raylib::prelude::*;
+use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
 use crate::gen_shape::{Drawable, ShapeRaw};
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, JsonSchema)]
 pub struct Circle {
     pub outer_color: Color,
     pub inner_color: Color,

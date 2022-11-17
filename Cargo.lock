@@ -143,6 +143,7 @@ dependencies = [
  "lazy_static",
  "libc",
  "raylib-sys",
+ "schemars",
  "serde",
 ]
 

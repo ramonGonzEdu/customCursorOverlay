@@ -1,13 +1,14 @@
 use std::str::FromStr;
 
 use device_query::{DeviceQuery, DeviceState, Keycode};
+use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
 pub trait Sampler1D {
     fn sample(&mut self, t: f32) -> f32;
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, JsonSchema)]
 #[serde(untagged)]
 pub enum Movesampler1D {
     Constant(f32),
@@ -23,6 +24,7 @@ pub enum Movesampler1D {
     // Trig(Trig),
     MouseClickCounter(MouseClickCounter),
     CounterReset(CounterReset),
+    Switch(Switch),
     KeyPress(KeyPress),
     DeltaTime(DeltaTime),
 }
@@ -43,13 +45,14 @@ impl Sampler1D for Movesampler1D {
             // Movesampler1D::Trig(trig) => trig.sample(t),
             Movesampler1D::MouseClickCounter(mouse_click_counter) => mouse_click_counter.sample(t),
             Movesampler1D::CounterReset(counter_reset) => counter_reset.sample(t),
+            Movesampler1D::Switch(switch) => switch.sample(t),
             Movesampler1D::KeyPress(key_press) => key_press.sample(t),
             Movesampler1D::DeltaTime(delta_time) => delta_time.sample(t),
         }
     }
 }
 
-// #[derive(Debug, Serialize, Deserialize)]
+// #[derive(Debug, Serialize, Deserialize,JsonSchema)]
 // pub struct Constant {
 //     pub value: f32,
 // }
@@ -66,7 +69,7 @@ impl Sampler1D for Movesampler1D {
 //     }
 // }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, JsonSchema)]
 pub struct Time {
     pub speed: f32,
 }
@@ -83,23 +86,25 @@ impl From<Time> for Movesampler1D {
     }
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, JsonSchema)]
 pub struct MouseClick {
-    pub mouse_timer_decrease: f32,
+    pub mouse_timer_decrease: Box<Movesampler1D>,
+    pub mouse_button: usize,
+    pub force_full_cycle: bool,
     #[serde(skip)]
     value: f32,
 }
 
 impl Sampler1D for MouseClick {
-    fn sample(&mut self, _t: f32) -> f32 {
+    fn sample(&mut self, t: f32) -> f32 {
         let device_state = DeviceState::new();
         let mouse = device_state.get_mouse();
-        if mouse.button_pressed[1] {
+        if mouse.button_pressed[self.mouse_button] && self.value <= 0.0 {
             self.value = 1.0;
         }
 
         if self.value > 0.0 {
-            self.value -= self.mouse_timer_decrease;
+            self.value -= self.mouse_timer_decrease.sample(t);
         }
 
         self.value
@@ -112,7 +117,7 @@ impl From<MouseClick> for Movesampler1D {
     }
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, JsonSchema)]
 pub struct Map {
     pub before_min: f32,
     pub before_max: f32,
@@ -138,7 +143,7 @@ impl From<Map> for Movesampler1D {
     }
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, JsonSchema)]
 pub struct Add {
     pub terms: Vec<Movesampler1D>,
 }
@@ -155,7 +160,7 @@ impl From<Add> for Movesampler1D {
     }
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, JsonSchema)]
 pub struct Subtract {
     pub pos: Box<Movesampler1D>,
     pub neg: Box<Movesampler1D>,
@@ -173,7 +178,7 @@ impl From<Subtract> for Movesampler1D {
     }
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, JsonSchema)]
 pub struct Multiply {
     pub factors: Vec<Movesampler1D>,
 }
@@ -192,7 +197,7 @@ impl From<Multiply> for Movesampler1D {
     }
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, JsonSchema)]
 pub struct Divide {
     pub top: Box<Movesampler1D>,
     pub bottom: Box<Movesampler1D>,
@@ -210,7 +215,7 @@ impl From<Divide> for Movesampler1D {
     }
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, JsonSchema)]
 pub struct Power {
     pub base: Box<Movesampler1D>,
     pub exponent: Box<Movesampler1D>,
@@ -228,7 +233,7 @@ impl From<Power> for Movesampler1D {
     }
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, JsonSchema)]
 pub struct Modulo {
     pub base: Box<Movesampler1D>,
     pub divisor: Box<Movesampler1D>,
@@ -246,7 +251,7 @@ impl From<Modulo> for Movesampler1D {
     }
 }
 
-// #[derive(Debug, Serialize, Deserialize)]
+// #[derive(Debug, Serialize, Deserialize,JsonSchema)]
 // #[serde(tag = "type")]
 // pub enum Trig {
 //     Sin(Box<Movesampler1D>),
@@ -276,7 +281,7 @@ impl From<Modulo> for Movesampler1D {
 //     }
 // }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, JsonSchema)]
 pub struct MouseClickCounter {
     pub mouse_click_counter_button: usize,
     #[serde(skip)]
@@ -301,7 +306,7 @@ impl From<MouseClickCounter> for Movesampler1D {
     }
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, JsonSchema)]
 pub struct CounterReset {
     pub counter: Box<Movesampler1D>,
     pub reset: Box<Movesampler1D>,
@@ -325,7 +330,29 @@ impl From<CounterReset> for Movesampler1D {
     }
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, JsonSchema)]
+pub struct Switch {
+    pub enable: Box<Movesampler1D>,
+    pub disable: Box<Movesampler1D>,
+    #[serde(skip)]
+    enabled: f32,
+}
+
+impl Sampler1D for Switch {
+    fn sample(&mut self, t: f32) -> f32 {
+        let enable = self.enable.sample(t);
+        let disable = self.disable.sample(t);
+        if enable >= 1.0 {
+            self.enabled = enable;
+        }
+        if disable >= 1.0 {
+            self.enabled = 0.0;
+        }
+        self.enabled
+    }
+}
+
+#[derive(Debug, Serialize, Deserialize, JsonSchema)]
 pub struct KeyPress {
     pub keys: Vec<String>,
     #[serde(skip)]
@@ -362,7 +389,7 @@ impl From<KeyPress> for Movesampler1D {
     }
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, JsonSchema)]
 pub struct DeltaTime {
     delta_time_multiplier: f32,
     #[serde(skip)]
@@ -393,7 +420,9 @@ mod tests {
         let sampler = Movesampler1D::Multiply(Multiply {
             factors: vec![
                 Movesampler1D::MouseClick(MouseClick {
-                    mouse_timer_decrease: 0.01,
+                    mouse_timer_decrease: Box::new(Movesampler1D::Constant(0.01)),
+                    mouse_button: 1,
+                    force_full_cycle: false,
                     value: 0.0,
                 }),
                 Movesampler1D::Constant(50.0),

@@ -7,7 +7,7 @@ edition = "2021"
 
 [dependencies]
 device_query = "1.1.1"
-raylib = {path = "../raylib-rs/raylib", features = ["serde"]}
+raylib = {path = "../raylib-rs/raylib", features = ["serde",]}
 schemars = "0.8.11"
 serde = {version = "1.0.147", features = ["derive"]}
 serde_jsonrc = "0.1.0"
