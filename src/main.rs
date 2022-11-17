@@ -2,11 +2,14 @@ pub mod circle;
 pub mod gen_shape;
 pub mod linear_samplers;
 pub mod movement;
+pub mod serde_keycode_serialize;
 
-use device_query::{DeviceQuery, DeviceState, MouseState};
 use raylib::prelude::*;
 
-use crate::gen_shape::{Drawable, Shape};
+use crate::{
+    gen_shape::{Drawable, Shape},
+    linear_samplers::Sampler1D,
+};
 
 fn main() {
     let s = 100;
@@ -37,10 +40,10 @@ fn main() {
     rl.set_window_size(sw, sh);
 
     let mut cursor: Vec<Shape> =
-        serde_json::from_reader(std::fs::File::open("cursor.json").unwrap()).unwrap();
+        serde_jsonrc::from_reader(std::fs::File::open("cursor.jsonc").unwrap()).unwrap();
 
-    println!("serialized = {}", serde_json::to_string(&cursor).unwrap());
-    let device_state = DeviceState::new();
+    println!("serialized = {}", serde_jsonrc::to_string(&cursor).unwrap());
+    // let device_state = DeviceState::new();
 
     while !rl.window_should_close() {
         let mut d = rl.begin_drawing(&thread);
@@ -48,9 +51,9 @@ fn main() {
         // rl.get_mouse_position()
         // println!("{:?}", MouseCursor::pos());
 
-        let mouse: MouseState = device_state.get_mouse();
-        println!("Current Mouse Coordinates: {:?}", mouse.coords);
-        println!("Current Mouse Clicks: {:?}", mouse.button_pressed);
+        // let mouse: MouseState = device_state.get_mouse();
+        // println!("Current Mouse Coordinates: {:?}", mouse.coords);
+        // println!("Current Mouse Clicks: {:?}", mouse.button_pressed);
 
         t += d.get_frame_time();
 
@@ -62,7 +65,9 @@ fn main() {
         });
 
         for shape in &mut cursor {
-            shape.draw(&mut d, t, (sw >> 2, sh >> 2));
+            if shape.enabled.sample(t) >= 1.0 {
+                shape.draw(&mut d, t, (sw >> 2, sh >> 2));
+            }
             // shape.draw(&mut d, t, (pos.0 - 10, pos.1 - 10));
         }
     }

@@ -1,4 +1,6 @@
-use device_query::{DeviceQuery, DeviceState};
+use std::str::FromStr;
+
+use device_query::{DeviceQuery, DeviceState, Keycode};
 use serde::{Deserialize, Serialize};
 
 pub trait Sampler1D {
@@ -6,7 +8,7 @@ pub trait Sampler1D {
 }
 
 #[derive(Debug, Serialize, Deserialize)]
-#[serde(tag = "untagged")]
+#[serde(untagged)]
 pub enum Movesampler1D {
     Constant(f32),
     Time(Time),
@@ -18,7 +20,11 @@ pub enum Movesampler1D {
     Divide(Divide),
     Power(Power),
     Modulo(Modulo),
-    Trig(Trig),
+    // Trig(Trig),
+    MouseClickCounter(MouseClickCounter),
+    CounterReset(CounterReset),
+    KeyPress(KeyPress),
+    DeltaTime(DeltaTime),
 }
 
 impl Sampler1D for Movesampler1D {
@@ -34,7 +40,11 @@ impl Sampler1D for Movesampler1D {
             Movesampler1D::Divide(divide) => divide.sample(t),
             Movesampler1D::Power(power) => power.sample(t),
             Movesampler1D::Modulo(modulo) => modulo.sample(t),
-            Movesampler1D::Trig(trig) => trig.sample(t),
+            // Movesampler1D::Trig(trig) => trig.sample(t),
+            Movesampler1D::MouseClickCounter(mouse_click_counter) => mouse_click_counter.sample(t),
+            Movesampler1D::CounterReset(counter_reset) => counter_reset.sample(t),
+            Movesampler1D::KeyPress(key_press) => key_press.sample(t),
+            Movesampler1D::DeltaTime(delta_time) => delta_time.sample(t),
         }
     }
 }
@@ -75,12 +85,13 @@ impl From<Time> for Movesampler1D {
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct MouseClick {
-    pub timer_tick: f32,
+    pub mouse_timer_decrease: f32,
+    #[serde(skip)]
     value: f32,
 }
 
 impl Sampler1D for MouseClick {
-    fn sample(&mut self, t: f32) -> f32 {
+    fn sample(&mut self, _t: f32) -> f32 {
         let device_state = DeviceState::new();
         let mouse = device_state.get_mouse();
         if mouse.button_pressed[1] {
@@ -88,7 +99,7 @@ impl Sampler1D for MouseClick {
         }
 
         if self.value > 0.0 {
-            self.value -= self.timer_tick;
+            self.value -= self.mouse_timer_decrease;
         }
 
         self.value
@@ -129,14 +140,12 @@ impl From<Map> for Movesampler1D {
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Add {
-    pub samplers: Vec<Movesampler1D>,
+    pub terms: Vec<Movesampler1D>,
 }
 
 impl Sampler1D for Add {
     fn sample(&mut self, t: f32) -> f32 {
-        self.samplers
-            .iter_mut()
-            .fold(0.0, |acc, s| acc + s.sample(t))
+        self.terms.iter_mut().fold(0.0, |acc, s| acc + s.sample(t))
     }
 }
 
@@ -166,12 +175,12 @@ impl From<Subtract> for Movesampler1D {
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Multiply {
-    pub samplers: Vec<Movesampler1D>,
+    pub factors: Vec<Movesampler1D>,
 }
 
 impl Sampler1D for Multiply {
     fn sample(&mut self, t: f32) -> f32 {
-        self.samplers
+        self.factors
             .iter_mut()
             .fold(1.0, |acc, s| acc * s.sample(t))
     }
@@ -221,13 +230,13 @@ impl From<Power> for Movesampler1D {
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Modulo {
-    pub number: Box<Movesampler1D>,
+    pub base: Box<Movesampler1D>,
     pub divisor: Box<Movesampler1D>,
 }
 
 impl Sampler1D for Modulo {
     fn sample(&mut self, t: f32) -> f32 {
-        self.number.sample(t) % self.divisor.sample(t)
+        self.base.sample(t) % self.divisor.sample(t)
     }
 }
 
@@ -237,32 +246,160 @@ impl From<Modulo> for Movesampler1D {
     }
 }
 
+// #[derive(Debug, Serialize, Deserialize)]
+// #[serde(tag = "type")]
+// pub enum Trig {
+//     Sin(Box<Movesampler1D>),
+//     Cos(Box<Movesampler1D>),
+//     Tan(Box<Movesampler1D>),
+//     Asin(Box<Movesampler1D>),
+//     Acos(Box<Movesampler1D>),
+//     Atan(Box<Movesampler1D>),
+// }
+
+// impl Sampler1D for Trig {
+//     fn sample(&mut self, t: f32) -> f32 {
+//         match self {
+//             Trig::Sin(s) => s.sample(t).sin(),
+//             Trig::Cos(s) => s.sample(t).cos(),
+//             Trig::Tan(s) => s.sample(t).tan(),
+//             Trig::Asin(s) => s.sample(t).asin(),
+//             Trig::Acos(s) => s.sample(t).acos(),
+//             Trig::Atan(s) => s.sample(t).atan(),
+//         }
+//     }
+// }
+
+// impl From<Trig> for Movesampler1D {
+//     fn from(t: Trig) -> Self {
+//         Movesampler1D::Trig(t)
+//     }
+// }
+
 #[derive(Debug, Serialize, Deserialize)]
-#[serde(tag = "type")]
-pub enum Trig {
-    Sin(Box<Movesampler1D>),
-    Cos(Box<Movesampler1D>),
-    Tan(Box<Movesampler1D>),
-    Asin(Box<Movesampler1D>),
-    Acos(Box<Movesampler1D>),
-    Atan(Box<Movesampler1D>),
+pub struct MouseClickCounter {
+    pub mouse_click_counter_button: usize,
+    #[serde(skip)]
+    counter: u32,
 }
 
-impl Sampler1D for Trig {
-    fn sample(&mut self, t: f32) -> f32 {
-        match self {
-            Trig::Sin(s) => s.sample(t).sin(),
-            Trig::Cos(s) => s.sample(t).cos(),
-            Trig::Tan(s) => s.sample(t).tan(),
-            Trig::Asin(s) => s.sample(t).asin(),
-            Trig::Acos(s) => s.sample(t).acos(),
-            Trig::Atan(s) => s.sample(t).atan(),
+impl Sampler1D for MouseClickCounter {
+    fn sample(&mut self, _t: f32) -> f32 {
+        let device_state = DeviceState::new();
+        let mouse = device_state.get_mouse();
+
+        if mouse.button_pressed[self.mouse_click_counter_button] {
+            self.counter += 1;
         }
+        self.counter as f32
     }
 }
 
-impl From<Trig> for Movesampler1D {
-    fn from(t: Trig) -> Self {
-        Movesampler1D::Trig(t)
+impl From<MouseClickCounter> for Movesampler1D {
+    fn from(m: MouseClickCounter) -> Self {
+        Movesampler1D::MouseClickCounter(m)
+    }
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct CounterReset {
+    pub counter: Box<Movesampler1D>,
+    pub reset: Box<Movesampler1D>,
+    #[serde(skip)]
+    offset: f32,
+}
+
+impl Sampler1D for CounterReset {
+    fn sample(&mut self, t: f32) -> f32 {
+        let reset = self.reset.sample(t);
+        if reset >= 1.0 {
+            self.offset = self.counter.sample(t);
+        }
+        self.counter.sample(t) - self.offset
+    }
+}
+
+impl From<CounterReset> for Movesampler1D {
+    fn from(c: CounterReset) -> Self {
+        Movesampler1D::CounterReset(c)
+    }
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct KeyPress {
+    pub keys: Vec<String>,
+    #[serde(skip)]
+    fixed_keys: Vec<Keycode>,
+}
+
+impl Sampler1D for KeyPress {
+    fn sample(&mut self, _t: f32) -> f32 {
+        if self.fixed_keys.len() == 0 {
+            self.fixed_keys = self
+                .keys
+                .iter()
+                .map(|k| Keycode::from_str(k).expect("Invalid key"))
+                .collect();
+        }
+
+        let device_state = DeviceState::new();
+        let keyboard = device_state.get_keys();
+
+        let mut pressed = 0.0;
+        for k in self.fixed_keys.iter() {
+            if keyboard.contains(k) {
+                pressed += 1.0;
+            }
+        }
+
+        pressed
+    }
+}
+
+impl From<KeyPress> for Movesampler1D {
+    fn from(k: KeyPress) -> Self {
+        Movesampler1D::KeyPress(k)
+    }
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct DeltaTime {
+    delta_time_multiplier: f32,
+    #[serde(skip)]
+    last_time: f32,
+}
+
+impl Sampler1D for DeltaTime {
+    fn sample(&mut self, t: f32) -> f32 {
+        let delta_time = t - self.last_time;
+        self.last_time = t;
+        delta_time * self.delta_time_multiplier
+    }
+}
+
+impl From<DeltaTime> for Movesampler1D {
+    fn from(d: DeltaTime) -> Self {
+        Movesampler1D::DeltaTime(d)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_mul_mouse() {
+        // create a sampler that multiplies the mouse click falloff by 50
+        let sampler = Movesampler1D::Multiply(Multiply {
+            factors: vec![
+                Movesampler1D::MouseClick(MouseClick {
+                    mouse_timer_decrease: 0.01,
+                    value: 0.0,
+                }),
+                Movesampler1D::Constant(50.0),
+            ],
+        });
+
+        println!("{:?}", serde_jsonrc::to_string(&sampler).unwrap());
     }
 }

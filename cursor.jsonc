@@ -1,0 +1,209 @@
+[
+  // {
+  //   "shape": {
+  //     "type": "Circle",
+  //     "outer_color": { "r": 255, "g": 0, "b": 255, "a": 255 },
+  //     "inner_color": { "r": 0, "g": 0, "b": 0, "a": 0 },
+  //     "radius": 4.0
+  //   },
+  //   "movement": [
+  //     {
+  //       "type": "Orbit",
+  //       "speed": 6.0,
+  //       "eccentricity": 0.2,
+  //       "angle_top": 0.0,
+  //       "angle_bottom": 3.0,
+  //       "radius": 10.0
+  //     }
+  //   ]
+  // },
+  // {
+  //   "shape": {
+  //     "type": "Circle",
+  //     "outer_color": { "r": 255, "g": 0, "b": 255, "a": 255 },
+  //     "inner_color": { "r": 0, "g": 0, "b": 0, "a": 0 },
+  //     "radius": 4.0
+  //   },
+  //   "movement": [
+  //     {
+  //       "type": "Orbit",
+  //       "speed": 6.0,
+  //       "eccentricity": 0.2,
+  //       "angle_top": 1.0,
+  //       "angle_bottom": 3.0,
+  //       "radius": 10.0
+  //     }
+  //   ]
+  // },
+  // {
+  //   "shape": {
+  //     "type": "Circle",
+  //     "outer_color": { "r": 255, "g": 0, "b": 255, "a": 255 },
+  //     "inner_color": { "r": 0, "g": 0, "b": 0, "a": 0 },
+  //     "radius": 4.0
+  //   },
+  //   "movement": [
+  //     {
+  //       "type": "Orbit",
+  //       "speed": 6.0,
+  //       "eccentricity": 0.2,
+  //       "angle_top": 2.0,
+  //       "angle_bottom": 3.0,
+  //       "radius": 10.0
+  //     }
+  //   ]
+  // },
+  // {
+  //   "shape": {
+  //     "type": "Circle",
+  //     "outer_color": { "r": 255, "g": 0, "b": 255, "a": 150 },
+  //     "inner_color": { "r": 0, "g": 0, "b": 0, "a": 0 },
+  //     "radius": 4.0
+  //   },
+  //   "movement": [
+  //     {
+  //       "type": "Orbit",
+  //       "speed": 6.0,
+  //       "eccentricity": 1.0,
+  //       "angle_top": 0.0,
+  //       "angle_bottom": 3.0,
+  //       "radius": 40.0
+  //     }
+  //   ]
+  // },
+  // {
+  //   "shape": {
+  //     "type": "Circle",
+  //     "outer_color": { "r": 255, "g": 0, "b": 255, "a": 150 },
+  //     "inner_color": { "r": 0, "g": 0, "b": 0, "a": 0 },
+  //     "radius": 4.0
+  //   },
+  //   "movement": [
+  //     {
+  //       "type": "Orbit",
+  //       "speed": 6.0,
+  //       "eccentricity": 1.0,
+  //       "angle_top": 1.0,
+  //       "angle_bottom": 3.0,
+  //       "radius": 40.0
+  //     }
+  //   ]
+  // },
+  // {
+  //   "shape": {
+  //     "type": "Circle",
+  //     "outer_color": { "r": 255, "g": 0, "b": 255, "a": 150 },
+  //     "inner_color": { "r": 0, "g": 0, "b": 0, "a": 0 },
+  //     "radius": 4.0
+  //   },
+  //   "movement": [
+  //     {
+  //       "type": "Orbit",
+  //       "speed": 6.0,
+  //       "eccentricity": 1.0,
+  //       "angle_top": 2.0,
+  //       "angle_bottom": 3.0,
+  //       "radius": 40.0
+  //     }
+  //   ]
+  // },
+
+  {
+    "enabled": 1,
+    "shape": {
+      "type": "Circle",
+      "outer_color": { "r": 255, "g": 64, "b": 255, "a": 255 },
+      "inner_color": { "r": 255, "g": 0, "b": 255, "a": 0 },
+      "radius": 4.0
+    },
+    "movement": [
+      {
+        "type": "Orbit",
+        "speed": -6.0,
+        "eccentricity": 1.0,
+        "angle_top": 0.0,
+        "angle_bottom": 3.0,
+        "radius": {
+          "factors": [
+            { "base": { "mouse_timer_decrease": 0.0008 }, "exponent": 2 },
+            50.0
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "enabled": 1,
+    "shape": {
+      "type": "Circle",
+      "outer_color": { "r": 255, "g": 64, "b": 255, "a": 255 },
+      "inner_color": { "r": 255, "g": 0, "b": 255, "a": 0 },
+      "radius": 4.0
+    },
+    "movement": [
+      {
+        "type": "Orbit",
+        "speed": -6.0,
+        "eccentricity": 1.0,
+        "angle_top": 1.0,
+        "angle_bottom": 3.0,
+        "radius": {
+          "factors": [
+            { "base": { "mouse_timer_decrease": 0.0008 }, "exponent": 2 },
+            50.0
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "enabled": 1,
+    "shape": {
+      "type": "Circle",
+      "outer_color": { "r": 255, "g": 64, "b": 255, "a": 255 },
+      "inner_color": { "r": 255, "g": 0, "b": 255, "a": 0 },
+      "radius": 4.0
+    },
+    "movement": [
+      {
+        "type": "Orbit",
+        "speed": -6.0,
+        "eccentricity": 1.0,
+        "angle_top": 2.0,
+        "angle_bottom": 3.0,
+        "radius": {
+          "factors": [
+            { "base": { "mouse_timer_decrease": 0.0008 }, "exponent": 2 },
+            50.0
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "enabled": 1,
+    "shape": {
+      "type": "Circle",
+      "outer_color": { "r": 255, "g": 64, "b": 255, "a": 255 },
+      "inner_color": { "r": 255, "g": 0, "b": 255, "a": 0 },
+      "radius": 4.0
+    },
+    "movement": [
+      {
+        "type": "Orbit",
+        "speed": -6.0,
+        "eccentricity": 1.0,
+        "angle_top": 2.0,
+        "angle_bottom": 3.0,
+        "radius": {
+          "factors": [
+            {
+              "keys": ["A"]
+            },
+            50.0
+          ]
+        }
+      }
+    ]
+  }
+]

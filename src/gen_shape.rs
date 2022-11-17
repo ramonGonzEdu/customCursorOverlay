@@ -1,7 +1,10 @@
 use raylib::prelude::RaylibDrawHandle;
 use serde::{Deserialize, Serialize};
 
-use crate::movement::{Movesampler2D, Sampler2D};
+use crate::{
+    linear_samplers::Movesampler1D,
+    movement::{Movesampler2D, Sampler2D},
+};
 
 pub trait Drawable {
     fn draw(&mut self, d: &mut RaylibDrawHandle, t: f32, coords: (i32, i32));
@@ -9,6 +12,7 @@ pub trait Drawable {
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Shape {
+    pub enabled: Movesampler1D,
     pub movement: Vec<Movesampler2D>,
     pub shape: ShapeRaw,
 }
