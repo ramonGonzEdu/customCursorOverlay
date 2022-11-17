@@ -1,0 +1,89 @@
+[
+  {
+    "type": "Circle",
+    "outer_color": { "r": 255, "g": 50, "b": 255, "a": 255 },
+    "inner_color": { "r": 0, "g": 0, "b": 0, "a": 0 },
+    "radius": 6.0,
+    "movement": [
+      {
+        "type": "Orbit",
+        "speed": 6.0,
+        "eccentricity": 0.5,
+        "angle_top": 0.0,
+        "angle_bottom": 5.0,
+        "radius": 10.0
+      }
+    ]
+  },
+  {
+    "type": "Circle",
+    "outer_color": { "r": 255, "g": 50, "b": 255, "a": 255 },
+    "inner_color": { "r": 0, "g": 0, "b": 0, "a": 0 },
+    "radius": 6.0,
+    "movement": [
+      {
+        "type": "Orbit",
+        "speed": 6.0,
+        "eccentricity": 0.5,
+        "angle_top": 1.0,
+        "angle_bottom": 5.0,
+        "radius": 10.0
+      }
+    ]
+  },
+  {
+    "type": "Circle",
+    "outer_color": { "r": 255, "g": 50, "b": 255, "a": 255 },
+    "inner_color": { "r": 0, "g": 0, "b": 0, "a": 0 },
+    "radius": 6.0,
+    "movement": [
+      {
+        "type": "Orbit",
+        "speed": 6.0,
+        "eccentricity": 0.5,
+        "angle_top": 2.0,
+        "angle_bottom": 5.0,
+        "radius": 10.0
+      }
+    ]
+  },
+  {
+    "type": "Circle",
+    "outer_color": { "r": 255, "g": 50, "b": 255, "a": 255 },
+    "inner_color": { "r": 0, "g": 0, "b": 0, "a": 0 },
+    "radius": 6.0,
+    "movement": [
+      {
+        "type": "Orbit",
+        "speed": 6.0,
+        "eccentricity": 0.5,
+        "angle_top": 3.0,
+        "angle_bottom": 5.0,
+        "radius": 10.0
+      }
+    ]
+  },
+  {
+    "type": "Circle",
+    "outer_color": { "r": 255, "g": 50, "b": 255, "a": 255 },
+    "inner_color": { "r": 0, "g": 0, "b": 0, "a": 0 },
+    "radius": 6.0,
+    "movement": [
+      {
+        "type": "Orbit",
+        "speed": 6.0,
+        "eccentricity": 0.5,
+        "angle_top": 4.0,
+        "angle_bottom": 5.0,
+        "radius": 10.0
+      }
+    ]
+  },
+  {
+    "type": "Circle",
+    "outer_color": { "r": 128, "g": 64, "b": 128, "a": 255 },
+    "inner_color": { "r": 0, "g": 0, "b": 0, "a": 0 },
+    "radius": 6.0,
+    "movement": []
+  }
+]
