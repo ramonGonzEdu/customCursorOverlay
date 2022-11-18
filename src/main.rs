@@ -1,15 +1,18 @@
-#![windows_subsystem = "windows"]
+// #![windows_subsystem = "windows"]
 pub mod circle;
 pub mod gen_shape;
+pub mod hash_string;
 pub mod linear_samplers;
 pub mod movement;
 pub mod serde_keycode_serialize;
+pub mod variable_holder;
 
 use raylib::prelude::*;
 
 use crate::{
     gen_shape::{Drawable, Shape},
-    linear_samplers::Sampler1D,
+    linear_samplers::{Sampler1D, SamplerData},
+    variable_holder::DataHolder,
 };
 
 fn main() {
@@ -25,7 +28,6 @@ fn main() {
     // let wx = (1920 - s) >> 1;
     // let wy = (1080 - s) >> 1;
     // rl.set_window_position(wx, wy);
-    let mut t = 0.0_f32;
 
     let (width, height) = unsafe {
         let monitor = raylib::ffi::GetCurrentMonitor();
@@ -48,6 +50,11 @@ fn main() {
     println!("serialized = {}", serde_jsonrc::to_string(&cursor).unwrap());
     // let device_state = DeviceState::new();
 
+    let mut data = SamplerData {
+        t: 0.0,
+        vars: DataHolder::new(),
+    };
+
     while !rl.window_should_close() {
         let mut d = rl.begin_drawing(&thread);
 
@@ -58,7 +65,7 @@ fn main() {
         // println!("Current Mouse Coordinates: {:?}", mouse.coords);
         // println!("Current Mouse Clicks: {:?}", mouse.button_pressed);
 
-        t += d.get_frame_time();
+        data.t += d.get_frame_time();
 
         d.clear_background(Color {
             r: 0,
@@ -68,8 +75,8 @@ fn main() {
         });
 
         for shape in &mut cursor {
-            if shape.enabled.sample(t) >= 1.0 {
-                shape.draw(&mut d, t, (sw >> 1, sh >> 1));
+            if shape.enabled.sample(&mut data) >= 1.0 {
+                shape.draw(&mut d, &mut data, (sw >> 1, sh >> 1));
             }
             // shape.draw(&mut d, t, (pos.0 - 10, pos.1 - 10));
         }

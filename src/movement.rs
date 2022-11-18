@@ -4,10 +4,10 @@ use device_query::{DeviceQuery, DeviceState};
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
-use crate::linear_samplers::{Movesampler1D, Sampler1D};
+use crate::linear_samplers::{Movesampler1D, Sampler1D, SamplerData};
 
 pub trait Sampler2D {
-    fn sample(&mut self, t: f32) -> (f32, f32);
+    fn sample(&mut self, data: &mut SamplerData) -> (f32, f32);
 }
 
 #[derive(Debug, Serialize, Deserialize, JsonSchema)]
@@ -19,11 +19,11 @@ pub enum Movesampler2D {
 }
 
 impl Sampler2D for Movesampler2D {
-    fn sample(&mut self, t: f32) -> (f32, f32) {
+    fn sample(&mut self, data: &mut SamplerData) -> (f32, f32) {
         match self {
-            Movesampler2D::Orbit(o) => o.sample(t),
-            Movesampler2D::Offset(o) => o.sample(t),
-            Movesampler2D::Mouse(m) => m.sample(t),
+            Movesampler2D::Orbit(o) => o.sample(data),
+            Movesampler2D::Offset(o) => o.sample(data),
+            Movesampler2D::Mouse(m) => m.sample(data),
         }
     }
 }
@@ -39,17 +39,17 @@ pub struct Orbit {
 }
 
 impl Sampler2D for Orbit {
-    fn sample(&mut self, t: f32) -> (f32, f32) {
-        let pre_x = (self.speed.sample(t) * t).cos() * self.eccentricity.sample(t);
-        let pre_y = (self.speed.sample(t) * t).sin();
+    fn sample(&mut self, data: &mut SamplerData) -> (f32, f32) {
+        let pre_x = (self.speed.sample(data) * data.t).cos() * self.eccentricity.sample(data);
+        let pre_y = (self.speed.sample(data) * data.t).sin();
 
-        let angle = (self.angle_top.sample(t) / self.angle_bottom.sample(t)) * 2.0_f32 * PI;
+        let angle = (self.angle_top.sample(data) / self.angle_bottom.sample(data)) * 2.0_f32 * PI;
 
         let cos_v = angle.cos();
         let sin_v = angle.sin();
 
-        let x = (pre_x * cos_v - pre_y * sin_v) * self.radius.sample(t);
-        let y = (pre_y * cos_v + pre_x * sin_v) * self.radius.sample(t);
+        let x = (pre_x * cos_v - pre_y * sin_v) * self.radius.sample(data);
+        let y = (pre_y * cos_v + pre_x * sin_v) * self.radius.sample(data);
 
         return (x, y);
     }
@@ -68,8 +68,8 @@ pub struct Offset {
 }
 
 impl Sampler2D for Offset {
-    fn sample(&mut self, t: f32) -> (f32, f32) {
-        (self.x.sample(t), self.y.sample(t))
+    fn sample(&mut self, data: &mut SamplerData) -> (f32, f32) {
+        (self.x.sample(data), self.y.sample(data))
     }
 }
 
@@ -87,13 +87,13 @@ pub struct Mouse {
 }
 
 impl Sampler2D for Mouse {
-    fn sample(&mut self, t: f32) -> (f32, f32) {
+    fn sample(&mut self, data: &mut SamplerData) -> (f32, f32) {
         let device_state = DeviceState::new();
         let mouse = device_state.get_mouse();
 
         let (x, y) = mouse.coords;
-        let x = (x as f32 - self.scale_center_x.sample(t)) * self.scale.sample(t);
-        let y = (y as f32 - self.scale_center_y.sample(t)) * self.scale.sample(t);
+        let x = (x as f32 - self.scale_center_x.sample(data)) * self.scale.sample(data);
+        let y = (y as f32 - self.scale_center_y.sample(data)) * self.scale.sample(data);
         (x, y)
     }
 }

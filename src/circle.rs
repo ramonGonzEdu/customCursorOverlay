@@ -2,7 +2,10 @@ use raylib::prelude::*;
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
-use crate::gen_shape::{Drawable, ShapeRaw};
+use crate::{
+    gen_shape::{Drawable, ShapeRaw},
+    linear_samplers::SamplerData,
+};
 
 #[derive(Debug, Serialize, Deserialize, JsonSchema)]
 pub struct Circle {
@@ -12,7 +15,7 @@ pub struct Circle {
 }
 
 impl Drawable for Circle {
-    fn draw(&mut self, d: &mut RaylibDrawHandle, _t: f32, pos: (i32, i32)) {
+    fn draw(&mut self, d: &mut RaylibDrawHandle, _t: &mut SamplerData, pos: (i32, i32)) {
         d.draw_circle_gradient(
             (pos.0) as i32,
             (pos.1) as i32,

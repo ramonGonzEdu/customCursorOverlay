@@ -1,3 +1,1 @@
-- [ ] Read from config file
-- [ ] add center color to circles
-- [ ] add position offset to circles
+- [ ] Variables

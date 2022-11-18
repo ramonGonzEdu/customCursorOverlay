@@ -1,8 +1,59 @@
 [
   {
     "enabled": {
-      "enable": { "keys": ["Escape"] },
-      "disable": { "keys": ["B"] }
+      "expressions": [
+        {
+          "set_variable_name": "buyMode",
+          "value": {
+            "enable": { "keys": ["B"] },
+            "disable": { "keys": ["Escape"] }
+          }
+        },
+        {
+          "set_variable_name": "gameMode",
+          "value": {
+            "enable": { "keys": ["Escape"] },
+            "disable": { "keys": ["B"] }
+          }
+        },
+        {
+          "set_variable_name": "clickRadius",
+          "value": {
+            "factors": [
+              {
+                "pos": {
+                  "terms": [
+                    1.0,
+                    {
+                      "mouse_timer_decrease": { "delta_time_multiplier": 0.8 },
+                      "mouse_button": 2,
+                      "force_full_cycle": true
+                    }
+                  ]
+                },
+                "neg": {
+                  "base": {
+                    "mouse_timer_decrease": { "delta_time_multiplier": 2 },
+                    "mouse_button": 1,
+                    "force_full_cycle": true
+                  },
+                  "exponent": 2
+                }
+              },
+              40.0
+            ]
+          }
+        }
+      ]
+    },
+    "shape": {
+      "type": "NoDraw"
+    },
+    "movement": []
+  },
+  {
+    "enabled": {
+      "variable_name": "gameMode"
     },
     "shape": {
       "type": "Circle",
@@ -14,8 +65,7 @@
   },
   {
     "enabled": {
-      "enable": { "keys": ["B"] },
-      "disable": { "keys": ["Escape"] }
+      "variable_name": "buyMode"
     },
     "shape": {
       "type": "Circle",
@@ -37,64 +87,9 @@
       }
     ]
   },
-  // {
-  //   "shape": {
-  //     "type": "Circle",
-  //     "outer_color": { "r": 255, "g": 0, "b": 255, "a": 255 },
-  //     "inner_color": { "r": 0, "g": 0, "b": 0, "a": 0 },
-  //     "radius": 4.0
-  //   },
-  //   "movement": [
-  //     {
-  //       "type": "Orbit",
-  //       "speed": 6.0,
-  //       "eccentricity": 0.2,
-  //       "angle_top": 0.0,
-  //       "angle_bottom": 3.0,
-  //       "radius": 10.0
-  //     }
-  //   ]
-  // },
-  // {
-  //   "shape": {
-  //     "type": "Circle",
-  //     "outer_color": { "r": 255, "g": 0, "b": 255, "a": 255 },
-  //     "inner_color": { "r": 0, "g": 0, "b": 0, "a": 0 },
-  //     "radius": 4.0
-  //   },
-  //   "movement": [
-  //     {
-  //       "type": "Orbit",
-  //       "speed": 6.0,
-  //       "eccentricity": 0.2,
-  //       "angle_top": 1.0,
-  //       "angle_bottom": 3.0,
-  //       "radius": 10.0
-  //     }
-  //   ]
-  // },
-  // {
-  //   "shape": {
-  //     "type": "Circle",
-  //     "outer_color": { "r": 255, "g": 0, "b": 255, "a": 255 },
-  //     "inner_color": { "r": 0, "g": 0, "b": 0, "a": 0 },
-  //     "radius": 4.0
-  //   },
-  //   "movement": [
-  //     {
-  //       "type": "Orbit",
-  //       "speed": 6.0,
-  //       "eccentricity": 0.2,
-  //       "angle_top": 2.0,
-  //       "angle_bottom": 3.0,
-  //       "radius": 10.0
-  //     }
-  //   ]
-  // },
   {
     "enabled": {
-      "enable": { "keys": ["Escape"] },
-      "disable": { "keys": ["B"] }
+      "variable_name": "gameMode"
     },
     "shape": {
       "type": "Circle",
@@ -110,37 +105,14 @@
         "angle_top": 0.0,
         "angle_bottom": 3.0,
         "radius": {
-          "factors": [
-            {
-              "pos": {
-                "terms": [
-                  1.0,
-                  {
-                    "mouse_timer_decrease": { "delta_time_multiplier": 0.8 },
-                    "mouse_button": 2,
-                    "force_full_cycle": true
-                  }
-                ]
-              },
-              "neg": {
-                "base": {
-                  "mouse_timer_decrease": { "delta_time_multiplier": 4 },
-                  "mouse_button": 1,
-                  "force_full_cycle": true
-                },
-                "exponent": 2
-              }
-            },
-            40.0
-          ]
+          "variable_name": "clickRadius"
         }
       }
     ]
   },
   {
     "enabled": {
-      "enable": { "keys": ["Escape"] },
-      "disable": { "keys": ["B"] }
+      "variable_name": "gameMode"
     },
     "shape": {
       "type": "Circle",
@@ -156,37 +128,14 @@
         "angle_top": 1.0,
         "angle_bottom": 3.0,
         "radius": {
-          "factors": [
-            {
-              "pos": {
-                "terms": [
-                  1.0,
-                  {
-                    "mouse_timer_decrease": { "delta_time_multiplier": 0.8 },
-                    "mouse_button": 2,
-                    "force_full_cycle": true
-                  }
-                ]
-              },
-              "neg": {
-                "base": {
-                  "mouse_timer_decrease": { "delta_time_multiplier": 4 },
-                  "mouse_button": 1,
-                  "force_full_cycle": true
-                },
-                "exponent": 2
-              }
-            },
-            40.0
-          ]
+          "variable_name": "clickRadius"
         }
       }
     ]
   },
   {
     "enabled": {
-      "enable": { "keys": ["Escape"] },
-      "disable": { "keys": ["B"] }
+      "variable_name": "gameMode"
     },
     "shape": {
       "type": "Circle",
@@ -202,29 +151,7 @@
         "angle_top": 2.0,
         "angle_bottom": 3.0,
         "radius": {
-          "factors": [
-            {
-              "pos": {
-                "terms": [
-                  1.0,
-                  {
-                    "mouse_timer_decrease": { "delta_time_multiplier": 0.8 },
-                    "mouse_button": 2,
-                    "force_full_cycle": true
-                  }
-                ]
-              },
-              "neg": {
-                "base": {
-                  "mouse_timer_decrease": { "delta_time_multiplier": 4 },
-                  "mouse_button": 1,
-                  "force_full_cycle": true
-                },
-                "exponent": 2
-              }
-            },
-            40.0
-          ]
+          "variable_name": "clickRadius"
         }
       }
     ]

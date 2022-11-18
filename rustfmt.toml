@@ -1,0 +1,5 @@
+imports_indent = "block"
+imports_granularity = "Crate"
+newline_style = "Unix"
+reorder_impl_items = true
+group_imports = "StdExternalCrate"

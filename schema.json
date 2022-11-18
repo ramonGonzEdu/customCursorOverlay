@@ -93,6 +93,20 @@
         }
       }
     },
+    "Expressions": {
+      "type": "object",
+      "required": [
+        "expressions"
+      ],
+      "properties": {
+        "expressions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Movesampler1D"
+          }
+        }
+      }
+    },
     "KeyPress": {
       "type": "object",
       "required": [
@@ -234,6 +248,15 @@
         },
         {
           "$ref": "#/definitions/DeltaTime"
+        },
+        {
+          "$ref": "#/definitions/VariableGet"
+        },
+        {
+          "$ref": "#/definitions/VariableSet"
+        },
+        {
+          "$ref": "#/definitions/Expressions"
         }
       ]
     },
@@ -402,6 +425,20 @@
               ]
             }
           }
+        },
+        {
+          "type": "object",
+          "required": [
+            "type"
+          ],
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "NoDraw"
+              ]
+            }
+          }
         }
       ]
     },
@@ -444,6 +481,32 @@
         "speed": {
           "type": "number",
           "format": "float"
+        }
+      }
+    },
+    "VariableGet": {
+      "type": "object",
+      "required": [
+        "variable_name"
+      ],
+      "properties": {
+        "variable_name": {
+          "type": "string"
+        }
+      }
+    },
+    "VariableSet": {
+      "type": "object",
+      "required": [
+        "set_variable_name",
+        "value"
+      ],
+      "properties": {
+        "set_variable_name": {
+          "type": "string"
+        },
+        "value": {
+          "$ref": "#/definitions/Movesampler1D"
         }
       }
     }

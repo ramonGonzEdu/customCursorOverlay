@@ -4,8 +4,15 @@ use device_query::{DeviceQuery, DeviceState, Keycode};
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
+use crate::variable_holder::DataHolder;
+
+pub struct SamplerData {
+    pub t: f32,
+    pub vars: DataHolder,
+}
+
 pub trait Sampler1D {
-    fn sample(&mut self, t: f32) -> f32;
+    fn sample(&mut self, data: &mut SamplerData) -> f32;
 }
 
 #[derive(Debug, Serialize, Deserialize, JsonSchema)]
@@ -27,27 +34,35 @@ pub enum Movesampler1D {
     Switch(Switch),
     KeyPress(KeyPress),
     DeltaTime(DeltaTime),
+    VariableGet(VariableGet),
+    VariableSet(VariableSet),
+    Expressions(Expressions),
 }
 
 impl Sampler1D for Movesampler1D {
-    fn sample(&mut self, t: f32) -> f32 {
+    fn sample(&mut self, data: &mut SamplerData) -> f32 {
         match self {
             Movesampler1D::Constant(constant) => *constant,
-            Movesampler1D::Time(time) => time.sample(t),
-            Movesampler1D::MouseClick(mouse_click) => mouse_click.sample(t),
-            Movesampler1D::Map(map) => map.sample(t),
-            Movesampler1D::Add(add) => add.sample(t),
-            Movesampler1D::Subtract(subtract) => subtract.sample(t),
-            Movesampler1D::Multiply(multiply) => multiply.sample(t),
-            Movesampler1D::Divide(divide) => divide.sample(t),
-            Movesampler1D::Power(power) => power.sample(t),
-            Movesampler1D::Modulo(modulo) => modulo.sample(t),
-            // Movesampler1D::Trig(trig) => trig.sample(t),
-            Movesampler1D::MouseClickCounter(mouse_click_counter) => mouse_click_counter.sample(t),
-            Movesampler1D::CounterReset(counter_reset) => counter_reset.sample(t),
-            Movesampler1D::Switch(switch) => switch.sample(t),
-            Movesampler1D::KeyPress(key_press) => key_press.sample(t),
-            Movesampler1D::DeltaTime(delta_time) => delta_time.sample(t),
+            Movesampler1D::Time(time) => time.sample(data),
+            Movesampler1D::MouseClick(mouse_click) => mouse_click.sample(data),
+            Movesampler1D::Map(map) => map.sample(data),
+            Movesampler1D::Add(add) => add.sample(data),
+            Movesampler1D::Subtract(subtract) => subtract.sample(data),
+            Movesampler1D::Multiply(multiply) => multiply.sample(data),
+            Movesampler1D::Divide(divide) => divide.sample(data),
+            Movesampler1D::Power(power) => power.sample(data),
+            Movesampler1D::Modulo(modulo) => modulo.sample(data),
+            // Movesampler1D::Trig(trig) => trig.sample(data),
+            Movesampler1D::MouseClickCounter(mouse_click_counter) => {
+                mouse_click_counter.sample(data)
+            }
+            Movesampler1D::CounterReset(counter_reset) => counter_reset.sample(data),
+            Movesampler1D::Switch(switch) => switch.sample(data),
+            Movesampler1D::KeyPress(key_press) => key_press.sample(data),
+            Movesampler1D::DeltaTime(delta_time) => delta_time.sample(data),
+            Movesampler1D::VariableGet(variable_get) => variable_get.sample(data),
+            Movesampler1D::VariableSet(variable_set) => variable_set.sample(data),
+            Movesampler1D::Expressions(expressions) => expressions.sample(data),
         }
     }
 }
@@ -58,7 +73,7 @@ impl Sampler1D for Movesampler1D {
 // }
 
 // impl Sampler1D for Constant {
-//     fn sample(&mut self, _t: f32) -> f32 {
+//     fn sample(&mut self, _data: &mut SamplerData) -> f32 {
 //         self.value
 //     }
 // }
@@ -75,8 +90,8 @@ pub struct Time {
 }
 
 impl Sampler1D for Time {
-    fn sample(&mut self, t: f32) -> f32 {
-        self.speed * t
+    fn sample(&mut self, data: &mut SamplerData) -> f32 {
+        self.speed * data.t
     }
 }
 
@@ -96,7 +111,7 @@ pub struct MouseClick {
 }
 
 impl Sampler1D for MouseClick {
-    fn sample(&mut self, t: f32) -> f32 {
+    fn sample(&mut self, data: &mut SamplerData) -> f32 {
         let device_state = DeviceState::new();
         let mouse = device_state.get_mouse();
         if mouse.button_pressed[self.mouse_button] && self.value <= 0.0 {
@@ -104,7 +119,7 @@ impl Sampler1D for MouseClick {
         }
 
         if self.value > 0.0 {
-            self.value -= self.mouse_timer_decrease.sample(t);
+            self.value -= self.mouse_timer_decrease.sample(data);
         }
 
         self.value
@@ -127,8 +142,8 @@ pub struct Map {
 }
 
 impl Sampler1D for Map {
-    fn sample(&mut self, t: f32) -> f32 {
-        let before = self.sampler.sample(t);
+    fn sample(&mut self, data: &mut SamplerData) -> f32 {
+        let before = self.sampler.sample(data);
         let before_range = self.before_max - self.before_min;
         let after_range = self.after_max - self.after_min;
         let before_normalized = (before - self.before_min) / before_range;
@@ -149,8 +164,10 @@ pub struct Add {
 }
 
 impl Sampler1D for Add {
-    fn sample(&mut self, t: f32) -> f32 {
-        self.terms.iter_mut().fold(0.0, |acc, s| acc + s.sample(t))
+    fn sample(&mut self, data: &mut SamplerData) -> f32 {
+        self.terms
+            .iter_mut()
+            .fold(0.0, |acc, s| acc + s.sample(data))
     }
 }
 
@@ -167,8 +184,8 @@ pub struct Subtract {
 }
 
 impl Sampler1D for Subtract {
-    fn sample(&mut self, t: f32) -> f32 {
-        self.pos.sample(t) - self.neg.sample(t)
+    fn sample(&mut self, data: &mut SamplerData) -> f32 {
+        self.pos.sample(data) - self.neg.sample(data)
     }
 }
 
@@ -184,10 +201,10 @@ pub struct Multiply {
 }
 
 impl Sampler1D for Multiply {
-    fn sample(&mut self, t: f32) -> f32 {
+    fn sample(&mut self, data: &mut SamplerData) -> f32 {
         self.factors
             .iter_mut()
-            .fold(1.0, |acc, s| acc * s.sample(t))
+            .fold(1.0, |acc, s| acc * s.sample(data))
     }
 }
 
@@ -204,8 +221,8 @@ pub struct Divide {
 }
 
 impl Sampler1D for Divide {
-    fn sample(&mut self, t: f32) -> f32 {
-        self.top.sample(t) / self.bottom.sample(t)
+    fn sample(&mut self, data: &mut SamplerData) -> f32 {
+        self.top.sample(data) / self.bottom.sample(data)
     }
 }
 
@@ -222,8 +239,8 @@ pub struct Power {
 }
 
 impl Sampler1D for Power {
-    fn sample(&mut self, t: f32) -> f32 {
-        self.base.sample(t).powf(self.exponent.sample(t))
+    fn sample(&mut self, data: &mut SamplerData) -> f32 {
+        self.base.sample(data).powf(self.exponent.sample(data))
     }
 }
 
@@ -240,8 +257,8 @@ pub struct Modulo {
 }
 
 impl Sampler1D for Modulo {
-    fn sample(&mut self, t: f32) -> f32 {
-        self.base.sample(t) % self.divisor.sample(t)
+    fn sample(&mut self, data: &mut SamplerData) -> f32 {
+        self.base.sample(data) % self.divisor.sample(data)
     }
 }
 
@@ -263,7 +280,7 @@ impl From<Modulo> for Movesampler1D {
 // }
 
 // impl Sampler1D for Trig {
-//     fn sample(&mut self, t: f32) -> f32 {
+//     fn sample(&mut self, data: &mut SamplerData) -> f32 {
 //         match self {
 //             Trig::Sin(s) => s.sample(t).sin(),
 //             Trig::Cos(s) => s.sample(t).cos(),
@@ -289,7 +306,7 @@ pub struct MouseClickCounter {
 }
 
 impl Sampler1D for MouseClickCounter {
-    fn sample(&mut self, _t: f32) -> f32 {
+    fn sample(&mut self, _data: &mut SamplerData) -> f32 {
         let device_state = DeviceState::new();
         let mouse = device_state.get_mouse();
 
@@ -315,12 +332,12 @@ pub struct CounterReset {
 }
 
 impl Sampler1D for CounterReset {
-    fn sample(&mut self, t: f32) -> f32 {
-        let reset = self.reset.sample(t);
+    fn sample(&mut self, data: &mut SamplerData) -> f32 {
+        let reset = self.reset.sample(data);
         if reset >= 1.0 {
-            self.offset = self.counter.sample(t);
+            self.offset = self.counter.sample(data);
         }
-        self.counter.sample(t) - self.offset
+        self.counter.sample(data) - self.offset
     }
 }
 
@@ -339,9 +356,9 @@ pub struct Switch {
 }
 
 impl Sampler1D for Switch {
-    fn sample(&mut self, t: f32) -> f32 {
-        let enable = self.enable.sample(t);
-        let disable = self.disable.sample(t);
+    fn sample(&mut self, data: &mut SamplerData) -> f32 {
+        let enable = self.enable.sample(data);
+        let disable = self.disable.sample(data);
         if enable >= 1.0 {
             self.enabled = enable;
         }
@@ -360,7 +377,7 @@ pub struct KeyPress {
 }
 
 impl Sampler1D for KeyPress {
-    fn sample(&mut self, _t: f32) -> f32 {
+    fn sample(&mut self, _data: &mut SamplerData) -> f32 {
         if self.fixed_keys.len() == 0 {
             self.fixed_keys = self
                 .keys
@@ -397,9 +414,9 @@ pub struct DeltaTime {
 }
 
 impl Sampler1D for DeltaTime {
-    fn sample(&mut self, t: f32) -> f32 {
-        let delta_time = t - self.last_time;
-        self.last_time = t;
+    fn sample(&mut self, data: &mut SamplerData) -> f32 {
+        let delta_time = data.t - self.last_time;
+        self.last_time = data.t;
         delta_time * self.delta_time_multiplier
     }
 }
@@ -407,6 +424,78 @@ impl Sampler1D for DeltaTime {
 impl From<DeltaTime> for Movesampler1D {
     fn from(d: DeltaTime) -> Self {
         Movesampler1D::DeltaTime(d)
+    }
+}
+
+#[derive(Debug, Serialize, Deserialize, JsonSchema)]
+pub struct VariableGet {
+    pub variable_name: String,
+    #[serde(skip)]
+    variable_id: Option<usize>,
+}
+
+impl Sampler1D for VariableGet {
+    fn sample(&mut self, data: &mut SamplerData) -> f32 {
+        if self.variable_id.is_none() {
+            self.variable_id = Some(data.vars.add_key(&self.variable_name));
+        }
+
+        data.vars.get(self.variable_id.unwrap())
+    }
+}
+
+impl From<VariableGet> for Movesampler1D {
+    fn from(v: VariableGet) -> Self {
+        Movesampler1D::VariableGet(v)
+    }
+}
+
+#[derive(Debug, Serialize, Deserialize, JsonSchema)]
+pub struct VariableSet {
+    pub set_variable_name: String,
+    pub value: Box<Movesampler1D>,
+    #[serde(skip)]
+    variable_id: Option<usize>,
+}
+
+impl Sampler1D for VariableSet {
+    fn sample(&mut self, data: &mut SamplerData) -> f32 {
+        if self.variable_id.is_none() {
+            self.variable_id = Some(data.vars.add_key(&self.set_variable_name));
+        }
+
+        let value = self.value.sample(data);
+
+        data.vars.set(self.variable_id.unwrap(), value);
+        // println!("Set variable {} to {}", self.set_variable_name, value);
+
+        value
+    }
+}
+
+impl From<VariableSet> for Movesampler1D {
+    fn from(v: VariableSet) -> Self {
+        Movesampler1D::VariableSet(v)
+    }
+}
+
+#[derive(Debug, Serialize, Deserialize, JsonSchema)]
+pub struct Expressions {
+    pub expressions: Vec<Movesampler1D>,
+}
+
+impl Sampler1D for Expressions {
+    fn sample(&mut self, data: &mut SamplerData) -> f32 {
+        // println!("Expressions: {:?}", self.expressions);
+        self.expressions
+            .iter_mut()
+            .fold(0.0, |_acc, e| e.sample(data))
+    }
+}
+
+impl From<Expressions> for Movesampler1D {
+    fn from(e: Expressions) -> Self {
+        Movesampler1D::Expressions(e)
     }
 }
 

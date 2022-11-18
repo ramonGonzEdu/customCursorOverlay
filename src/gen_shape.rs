@@ -3,12 +3,12 @@ use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
 use crate::{
-    linear_samplers::Movesampler1D,
+    linear_samplers::{Movesampler1D, SamplerData},
     movement::{Movesampler2D, Sampler2D},
 };
 
 pub trait Drawable {
-    fn draw(&mut self, d: &mut RaylibDrawHandle, t: f32, coords: (i32, i32));
+    fn draw(&mut self, d: &mut RaylibDrawHandle, t: &mut SamplerData, coords: (i32, i32));
 }
 
 #[derive(Debug, Serialize, Deserialize, JsonSchema)]
@@ -19,12 +19,13 @@ pub struct Shape {
 }
 
 impl Drawable for Shape {
-    fn draw(&mut self, d: &mut RaylibDrawHandle, t: f32, win: (i32, i32)) {
+    fn draw(&mut self, d: &mut RaylibDrawHandle, data: &mut SamplerData, win: (i32, i32)) {
         let (x, y) = self.movement.iter_mut().fold((0.0, 0.0), |(x, y), m| {
-            let (dx, dy) = m.sample(t);
+            let (dx, dy) = m.sample(data);
             (x + dx, y + dy)
         });
-        self.shape.draw(d, t, (x as i32 + win.0, y as i32 + win.1));
+        self.shape
+            .draw(d, data, (x as i32 + win.0, y as i32 + win.1));
     }
 }
 
@@ -32,14 +33,23 @@ impl Drawable for Shape {
 #[serde(tag = "type")]
 pub enum ShapeRaw {
     Circle(crate::circle::Circle),
+    NoDraw(NoDraw),
 }
 
 impl Drawable for ShapeRaw {
-    fn draw(&mut self, d: &mut RaylibDrawHandle, t: f32, pos: (i32, i32)) {
+    fn draw(&mut self, d: &mut RaylibDrawHandle, data: &mut SamplerData, pos: (i32, i32)) {
         match self {
-            ShapeRaw::Circle(c) => c.draw(d, t, pos),
+            ShapeRaw::Circle(c) => c.draw(d, data, pos),
+            ShapeRaw::NoDraw(_) => {}
         }
     }
+}
+
+#[derive(Debug, Serialize, Deserialize, JsonSchema)]
+pub struct NoDraw;
+
+impl Drawable for NoDraw {
+    fn draw(&mut self, _d: &mut RaylibDrawHandle, _data: &mut SamplerData, _pos: (i32, i32)) {}
 }
 
 #[cfg(test)]
