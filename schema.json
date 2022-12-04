@@ -439,6 +439,44 @@
               ]
             }
           }
+        },
+        {
+          "type": "object",
+          "required": [
+            "color_bl",
+            "color_br",
+            "color_tl",
+            "color_tr",
+            "height",
+            "type",
+            "width"
+          ],
+          "properties": {
+            "color_bl": {
+              "$ref": "#/definitions/Color"
+            },
+            "color_br": {
+              "$ref": "#/definitions/Color"
+            },
+            "color_tl": {
+              "$ref": "#/definitions/Color"
+            },
+            "color_tr": {
+              "$ref": "#/definitions/Color"
+            },
+            "height": {
+              "$ref": "#/definitions/Movesampler1D"
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "Rect"
+              ]
+            },
+            "width": {
+              "$ref": "#/definitions/Movesampler1D"
+            }
+          }
         }
       ]
     },

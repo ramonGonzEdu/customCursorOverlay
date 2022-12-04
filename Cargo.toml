@@ -1,16 +1,6 @@
-[package]
-name = "cursor"
-version = "0.1.0"
-edition = "2021"
+[workspace]
+members = ["cursor_shower"]
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
-[dependencies]
-device_query = "1.1.1"
-raylib = {path = "../raylib-rs/raylib", features = ["serde",]}
-schemars = "0.8.11"
-serde = {version = "1.0.147", features = ["derive"]}
-serde_jsonrc = "0.1.0"
 
 # Set the default for dependencies.
 [profile.dev.package."*"]

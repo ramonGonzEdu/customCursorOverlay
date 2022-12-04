@@ -1,1 +1,3 @@
-/target
+*target
+cursor_creator
+*.exe

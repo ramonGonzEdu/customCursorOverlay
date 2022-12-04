@@ -1,0 +1,236 @@
+[
+  {
+    "enabled": {
+      "expressions": [
+        {
+          "set_variable_name": "buyMode",
+          "value": {
+            "enable": { "keys": ["B"] },
+            "disable": { "keys": ["Escape"] }
+          }
+        },
+        {
+          "set_variable_name": "gameMode",
+          "value": {
+            "enable": { "keys": ["Escape"] },
+            "disable": { "keys": ["B"] }
+          }
+        },
+        {
+          "set_variable_name": "knifeMode",
+          "value": {
+            "enable": { "keys": ["Key3"] },
+            "disable": { "keys": ["Key2", "Key1"] }
+          }
+        },
+        {
+          "set_variable_name": "knifeCooldown",
+          "value": {
+            "factors": [
+              {
+                "terms": [
+                  {
+                    "base": {
+                      "mouse_timer_decrease": { "delta_time_multiplier": 2 },
+                      "mouse_button": 1,
+                      "force_full_cycle": true
+                    },
+                    "exponent": 2
+                  },
+                  {
+                    "mouse_timer_decrease": { "delta_time_multiplier": 0.8 },
+                    "mouse_button": 2,
+                    "force_full_cycle": true
+                  }
+                ]
+              },
+              80.0
+            ]
+          }
+        },
+        {
+          "set_variable_name": "clickRadius",
+          "value": {
+            "factors": [
+              {
+                "base": {
+                  "mouse_timer_decrease": { "delta_time_multiplier": 2 },
+                  "mouse_button": 1,
+                  "force_full_cycle": false
+                },
+                "exponent": 2
+              },
+              40.0
+            ]
+          }
+        }
+      ]
+    },
+    "shape": {
+      "type": "NoDraw"
+    },
+    "movement": []
+  },
+  {
+    "enabled": {
+      "variable_name": "buyMode"
+    },
+    "shape": {
+      "type": "Circle",
+      "outer_color": { "r": 0, "g": 0, "b": 0, "a": 255 },
+      "inner_color": { "r": 112, "g": 112, "b": 112, "a": 0 },
+      "radius": 4.0
+    },
+    "movement": [
+      {
+        "type": "Mouse",
+        "scale": 1.0,
+        "scale_center_x": 0,
+        "scale_center_y": 0
+      },
+      {
+        "type": "Offset",
+        "x": -960,
+        "y": -540
+      }
+    ]
+  },
+  {
+    "enabled": {
+      "variable_name": "gameMode"
+    },
+    "shape": {
+      "type": "Rect",
+      "width": 2,
+      "height": 2,
+      "color_bl": { "r": 229, "g": 34, "b": 34, "a": 255 },
+      "color_br": { "r": 229, "g": 34, "b": 34, "a": 255 },
+      "color_tl": { "r": 229, "g": 34, "b": 34, "a": 255 },
+      "color_tr": { "r": 229, "g": 34, "b": 34, "a": 255 }
+    },
+    "movement": [
+      {
+        "type": "Offset",
+        "x": -1.0,
+        "y": -1.0
+      }
+    ]
+  },
+  {
+    "enabled": {
+      "variable_name": "gameMode"
+    },
+    "shape": {
+      "type": "Rect",
+      "width": 10,
+      "height": 2,
+      "color_bl": { "r": 229, "g": 34, "b": 34, "a": 150 },
+      "color_br": { "r": 229, "g": 34, "b": 34, "a": 150 },
+      "color_tl": { "r": 229, "g": 34, "b": 34, "a": 150 },
+      "color_tr": { "r": 229, "g": 34, "b": 34, "a": 150 }
+    },
+    "movement": [
+      {
+        "type": "Offset",
+        "x": -5.0,
+        "y": {
+          "pos": -2.0,
+          "neg": { "variable_name": "clickRadius" }
+        }
+      }
+    ]
+  },
+  {
+    "enabled": {
+      "variable_name": "gameMode"
+    },
+    "shape": {
+      "type": "Rect",
+      "width": 10,
+      "height": 2,
+      "color_bl": { "r": 229, "g": 34, "b": 34, "a": 150 },
+      "color_br": { "r": 229, "g": 34, "b": 34, "a": 150 },
+      "color_tl": { "r": 229, "g": 34, "b": 34, "a": 150 },
+      "color_tr": { "r": 229, "g": 34, "b": 34, "a": 150 }
+    },
+    "movement": [
+      {
+        "type": "Offset",
+        "x": -5.0,
+        "y": {
+          "variable_name": "clickRadius"
+        }
+      }
+    ]
+  },
+  {
+    "enabled": {
+      "variable_name": "gameMode"
+    },
+    "shape": {
+      "type": "Rect",
+      "width": 2,
+      "height": 10,
+      "color_bl": { "r": 229, "g": 34, "b": 34, "a": 150 },
+      "color_br": { "r": 229, "g": 34, "b": 34, "a": 150 },
+      "color_tl": { "r": 229, "g": 34, "b": 34, "a": 150 },
+      "color_tr": { "r": 229, "g": 34, "b": 34, "a": 150 }
+    },
+    "movement": [
+      {
+        "type": "Offset",
+        "x": {
+          "variable_name": "clickRadius"
+        },
+        "y": -5.0
+      }
+    ]
+  },
+  {
+    "enabled": {
+      "variable_name": "gameMode"
+    },
+    "shape": {
+      "type": "Rect",
+      "width": 2,
+      "height": 10,
+      "color_bl": { "r": 229, "g": 34, "b": 34, "a": 150 },
+      "color_br": { "r": 229, "g": 34, "b": 34, "a": 150 },
+      "color_tl": { "r": 229, "g": 34, "b": 34, "a": 150 },
+      "color_tr": { "r": 229, "g": 34, "b": 34, "a": 150 }
+    },
+    "movement": [
+      {
+        "type": "Offset",
+        "x": {
+          "pos": -2.0,
+          "neg": { "variable_name": "clickRadius" }
+        },
+        "y": -5.0
+      }
+    ]
+  },
+  {
+    "enabled": {
+      "variable_name": "knifeMode"
+    },
+    "shape": {
+      "type": "Rect",
+      "width": {
+        "variable_name": "knifeCooldown"
+      },
+      "height": 6,
+      "color_bl": { "r": 229, "g": 34, "b": 34, "a": 150 },
+      "color_br": { "r": 229, "g": 34, "b": 34, "a": 150 },
+      "color_tl": { "r": 229, "g": 34, "b": 34, "a": 150 },
+      "color_tr": { "r": 229, "g": 34, "b": 34, "a": 150 }
+    },
+    "movement": [
+      {
+        "type": "Offset",
+        "x": -40.0,
+        "y": -80.0
+      }
+    ]
+  }
+]
